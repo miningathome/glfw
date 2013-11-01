@@ -1160,16 +1160,12 @@ void _glfwPlatformSetWindowMonitor(_GLFWwindow* window,
                                    int width, int height)
 {
     if (window->monitor)
-    {
         leaveFullscreenMode(window);
-        _glfwInputWindowMonitorChange(window, NULL);
-    }
 
-    if (monitor)
-    {
-        _glfwInputWindowMonitorChange(window, monitor);
+    _glfwInputWindowMonitorChange(window, monitor);
+
+    if (window->monitor)
         enterFullscreenMode(window);
-    }
 }
 
 void _glfwPlatformPollEvents(void)
