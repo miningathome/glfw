@@ -754,7 +754,6 @@ static void processEvent(XEvent *event)
                            False,
                            SubstructureNotifyMask | SubstructureRedirectMask,
                            event);
-
             }
             else if (event->xclient.message_type == _glfw.x11.XdndEnter)
             {
@@ -772,9 +771,6 @@ static void processEvent(XEvent *event)
                                   _glfw.x11.UTF8_STRING,
                                   _glfw.x11.XdndSelection,
                                   window->x11.handle, CurrentTime);
-            }
-            else if (event->xclient.message_type == _glfw.x11.XdndLeave)
-            {
             }
             else if (event->xclient.message_type == _glfw.x11.XdndPosition)
             {
@@ -811,14 +807,11 @@ static void processEvent(XEvent *event)
 
         case SelectionNotify:
         {
-            if (event->xselection.property != None)
+            if (event->xselection.property)
             {
                 // Xdnd: got a selection notification from the conversion
                 // we asked for, get the data and finish the d&d event
                 char* data;
-
-                free(_glfw.x11.xdnd.string);
-                _glfw.x11.xdnd.string = NULL;
 
                 const int result = _glfwGetWindowProperty(event->xselection.requestor,
                                                           event->xselection.property,
@@ -827,29 +820,12 @@ static void processEvent(XEvent *event)
 
                 if (result)
                 {
-                    // Nautilus seems to add a \r at the end of the paths
-                    // remove it so paths can be directly used
-                    _glfw.x11.xdnd.string = malloc(strlen(data) + 1);
-                    char *to = _glfw.x11.xdnd.string;
-                    const char *from = data;
-                    const char *current = strchr(from, '\r');
-
-                    while (current)
-                    {
-                        const int charsToCopy = current - from;
-                        memcpy(to, from, (size_t) charsToCopy);
-                        to += charsToCopy;
-
-                        from = current + 1;
-                        current = strchr(from, '\r');
-                    }
-
-                    const size_t remaining = strlen(from);
-
-                    memcpy(to, from, remaining);
-                    to += remaining;
-                    *to = 0;
+                    // TODO: Parse and split text/uri-list data
+                    // TODO: Remove prefix from file URIs
+                    _glfwInputDrop(window, 1, (const char**) &data);
                 }
+
+                XFree(data);
 
                 XEvent reply;
                 memset(&reply, 0, sizeof(reply));
@@ -865,11 +841,7 @@ static void processEvent(XEvent *event)
                 // Reply that all is well
                 XSendEvent(_glfw.x11.display, _glfw.x11.xdnd.sourceWindow,
                            False, NoEventMask, &reply);
-                XSync(_glfw.x11.display, False);
-                XFree(data);
-
-                if (result)
-                    _glfwInputDrop(window, _glfw.x11.xdnd.string);
+                XFlush(_glfw.x11.display);
             }
 
             break;
