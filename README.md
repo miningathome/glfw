@@ -46,6 +46,8 @@ The following dependencies are needed by the examples and test programs:
 ## Changelog
 
  - Added native monitor handle access to native API
+ - Added `GLFW_CURSOR_CAPTURED` cursor mode for confining the cursor to the
+   client area of a window
  - [Cocoa] Bugfix: Using a 1x1 cursor for hidden mode caused some screen
                    recorders to fail
 

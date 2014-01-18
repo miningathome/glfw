@@ -39,20 +39,6 @@ static GLboolean reopen = GL_FALSE;
 static double cursor_x;
 static double cursor_y;
 
-static void toggle_cursor(GLFWwindow* window)
-{
-    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-    {
-        printf("Released cursor\n");
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }
-    else
-    {
-        printf("Captured cursor\n");
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
-}
-
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -67,23 +53,30 @@ static void cursor_position_callback(GLFWwindow* window, double x, double y)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    if (action != GLFW_PRESS)
+        return;
+
     switch (key)
     {
-        case GLFW_KEY_SPACE:
-        {
-            if (action == GLFW_PRESS)
-                toggle_cursor(window);
-
+        case GLFW_KEY_N:
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             break;
-        }
+
+        case GLFW_KEY_H:
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            break;
+
+        case GLFW_KEY_D:
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            break;
+
+        case GLFW_KEY_C:
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+            break;
 
         case GLFW_KEY_R:
-        {
-            if (action == GLFW_PRESS)
-                reopen = GL_TRUE;
-
+            reopen = GL_TRUE;
             break;
-        }
     }
 }
 
