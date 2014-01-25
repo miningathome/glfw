@@ -2,6 +2,9 @@ project(GLFW C)
 
 cmake_minimum_required(VERSION 2.8)
 
+# custom code to modify output directories
+include (${CMAKE_CURRENT_SOURCE_DIR}/CMake/unify.cmake)
+
 set(GLFW_VERSION_MAJOR "3")
 set(GLFW_VERSION_MINOR "0")
 set(GLFW_VERSION_PATCH "4")
