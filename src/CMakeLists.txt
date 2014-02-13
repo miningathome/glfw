@@ -83,6 +83,10 @@ if (BUILD_SHARED_LIBS)
 endif()
 
 if (GLFW_INSTALL)
-    install(TARGETS glfw EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS glfw
+      EXPORT glfwTargets
+      RUNTIME DESTINATION bin${LIB_SUFFIX}
+      LIBRARY DESTINATION lib${LIB_SUFFIX}
+      ARCHIVE DESTINATION lib${LIB_SUFFIX})
 endif()
 
